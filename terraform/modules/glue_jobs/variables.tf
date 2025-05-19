@@ -59,6 +59,31 @@ variable "glue_jobs" {
         "--enable-continuous-cloudwatch-log" = "true"
         "--enable-metrics" = "true"
       }
+    },
+    {
+      name           = "kafka-to-bronze-financial-transactions"
+      filename       = "kafka_to_bronze.py"
+      directory      = "bronze"
+      job_type       = "KafkaToBronze"
+      worker_type    = "G.1X"
+      num_workers    = 4
+      timeout        = 60
+      max_retries    = 3
+      glue_version   = "3.0"
+      default_arguments = {
+        "--job-language"               = "python"
+        "--enable-continuous-cloudwatch-log" = "true"
+        "--enable-metrics"             = "true"
+        "--enable-spark-ui"            = "true"
+        "--kafka_bootstrap_servers"    = "WILL_BE_REPLACED_DYNAMICALLY"
+        "--kafka_topic"                = "financial-transactions"
+        "--target_path"                = "s3://stream/bronze/financial-transactions/"
+        "--schema_registry_url"        = ""
+        "--kafka_security_protocol"    = "SASL_SSL"
+        "--audit_logging_enabled"      = "true"
+        "--audit_table"                = "s3://stream/bronze/audit/kafka-ingestion/"
+        "--extra-jars"                 = "s3://aws-glue-assets-ACCOUNT-REGION/extra-jars/aws-msk-iam-auth-1.1.1-all.jar"
+      }
     }
   ]
 }
